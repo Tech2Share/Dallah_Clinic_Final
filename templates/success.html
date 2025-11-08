@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Success</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: url("{{ url_for('static', filename='images/background.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            text-align: center;
+            color: #fff;
+            position: relative;
+        }
+
+        /* Splash Screen Styles */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.975); /* Semi-transparent background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 1s ease-out;
+        }
+
+        /* Logo inside Splash Screen */
+        #splash-screen img {
+            max-width: 120px;
+            object-fit: contain;
+        }
+
+        /* Loading Bar inside Splash Screen */
+        #splash-screen .loading-bar-container {
+            width: 120px; /* Same width as the logo */
+            height: 6px; /* Slightly taller for better visibility */
+            background-color: #f3f3f3; /* Light background */
+            border-radius: 30px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        #splash-screen .loading-bar {
+            height: 100%;
+            width: 0;
+            background-color: #d57323; /* Blue color */
+            border-radius: 30px;
+            transition: width 3s ease-in-out; /* Smooth fill transition */
+        }
+
+        /* Logo Styles for Success Page (Unchanged) */
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 50px;
+        }
+
+        .logo-container img {
+            max-width: 220px;
+            object-fit: contain;
+        }
+
+        /* Heading */
+        h1 {
+            font-size: 2.8rem;
+            color: #fff;
+            margin-bottom: 40px;
+            font-weight: 600;
+            text-transform: uppercase;
+            text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Success Message */
+        .success-message {
+            background: rgba(0, 0, 0, 0.8); /* Darker overlay for contrast */
+            border-radius: 20px;
+            padding: 60px;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 700px;
+            backdrop-filter: blur(10px);
+            box-sizing: border-box;
+            margin-bottom: 50px;
+        }
+
+        /* Button Styles */
+        .upload-btn {
+            background-color: #3e5d92;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            padding: 18px;
+            width: 100%;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            border: none;
+        }
+
+        .upload-btn:hover {
+            background-color: #022a5b;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 0.8em;
+            color: #fbf8f8;
+            background-color: #b9c4cf00;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .logo-container img {
+                max-width: 180px;
+            }
+
+            .success-message {
+                padding: 30px;
+                width: 90%;
+            }
+
+            .upload-btn {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Splash Screen: Initially visible on page load -->
+    <div id="splash-screen">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Dallah Clinics Logo">
+        <div class="loading-bar-container">
+            <div class="loading-bar" id="loading-bar"></div>
+        </div>
+    </div>
+
+    <!-- Logo Section -->
+    <div class="logo-container">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Dallah Clinics Logo">
+    </div>
+
+    <h1>DALLAH HEALTH CARE</h1>
+
+    <!-- Success Message -->
+    <div class="success-message" id="main-content" style="display: none;">
+        <h2>Data has been successfully uploaded!</h2>
+        <p>Data has been successfully uploaded to the <strong>{{ clinic }}</strong> clinic and executive tab for <strong>{{ date }}</strong>.</p>
+        <p>You can now upload more data or proceed to review the records.</p>
+    </div>
+
+    <!-- Upload More Button -->
+    <form action="{{ url_for('index') }}" method="get">
+        <button type="submit" class="upload-btn">Upload More</button>
+    </form>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Dallah Health Care. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Show splash screen for 3-4 seconds when page loads
+        window.onload = function() {
+            setTimeout(function() {
+                // Start loading bar animation
+                document.getElementById('loading-bar').style.width = '100%';
+
+                // Fade out the splash screen after 3 seconds
+                setTimeout(function() {
+                    document.getElementById('splash-screen').style.opacity = '0'; // Fade out splash screen
+                    setTimeout(function() {
+                        document.getElementById('splash-screen').style.display = 'none'; // Hide splash screen completely
+                        document.getElementById('main-content').style.display = 'block'; // Show success content
+                    }, 1000); // Wait for fade-out to complete
+                }, 3000); // Splash screen visible for 3 seconds
+            }, 100); // Delay to start loading bar
+        };
+    </script>
+
+</body>
+</html>

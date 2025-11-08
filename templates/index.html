@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Files</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: url("{{ url_for('static', filename='images/background.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #fff;
+            position: relative;
+        }
+
+        /* Splash Screen Styles */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgb(16, 16, 16); /* Semi-transparent background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 1s ease-out;
+        }
+
+        /* Logo inside Splash Screen */
+        #splash-screen img {
+            max-width: 120px;
+            object-fit: contain;
+        }
+
+        /* Loading Bar inside Splash Screen */
+        #splash-screen .loading-bar-container {
+            width: 120px; /* Same width as the logo */
+            height: 6px; /* Slightly taller for better visibility */
+            background-color: #f3f3f3; /* Light background */
+            border-radius: 30px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        #splash-screen .loading-bar {
+            height: 100%;
+            width: 0;
+            background-color: #d1592e; /* Blue color */
+            border-radius: 30px;
+            transition: width 3s ease-in-out; /* Smooth fill transition */
+        }
+
+        /* Logo Styles for Form (Unchanged) */
+        .logo-container {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            z-index: 10;
+        }
+
+        .logo-container img {
+            max-width: 120px;
+            object-fit: contain;
+        }
+
+        /* Form Container */
+        .form-container {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            box-sizing: border-box;
+            margin-top: 50px;
+        }
+
+        /* Heading */
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 2.8rem;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.7);
+            letter-spacing: 2px;
+        }
+
+        /* Form Label and Inputs */
+        label {
+            font-size: 1rem;
+            color: #ccc;
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        input[type="file"],
+        input[type="date"],
+        input[type="number"],
+        select,
+        textarea,
+        button[type="submit"] {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            font-size: 1rem;
+            background-color: #444;
+            border: 2px solid #555;
+            color: #fff;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        button[type="submit"] {
+            background-color: #6c85b1;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 16px;
+            font-size: 1rem;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #526b8a;
+        }
+
+        /* Form Group Spacing */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        /* Textarea Styles */
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Fade-in Animation for Inputs */
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            opacity: 0;
+            animation: fadeInUp 0.5s ease-in-out forwards;
+        }
+
+        /* Fade-in Animation Keyframes */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .logo-container img {
+                max-width: 100px;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .form-container {
+                padding: 25px;
+                width: 90%;
+            }
+
+            button[type="submit"] {
+                padding: 16px;
+            }
+
+            label {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    
+    <!-- Splash Screen (Only shown initially) -->
+    <div id="splash-screen">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Dallah Clinics Logo">
+        <div class="loading-bar-container">
+            <div class="loading-bar" id="loading-bar"></div>
+        </div>
+    </div>
+
+    <!-- Logo Section: Positioned on the left -->
+    <div class="logo-container">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Dallah Clinics Logo">
+    </div>
+
+    <!-- Form Container -->
+    <div class="form-container">
+        <h1>DALLAH HEALTH CARE</h1>
+        
+        <!-- Form -->
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="ab_file">Select Revenue File:</label>
+                <input type="file" name="ab_file" required>
+            </div>
+
+            <div class="form-group">
+                <label for="ac_file">Select Department File:</label>
+                <input type="file" name="ac_file" required>
+            </div>
+
+            <div class="form-group">
+                <label for="clinic">Select Clinic:</label>
+                <select name="clinic" required>
+                    <option value="Al_Yarmouk">Al Yarmouk</option>
+                    <option value="Qurtubah">Qurtubah</option>
+                    <option value="Al_Salam">Al Salam</option>
+                    <option value="Al_Areed">Al Areed</option>
+                    <option value="Executive">Executive</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="date">Select Date:</label>
+                <input type="date" name="date" required>
+            </div>
+
+            <!-- New fields -->
+            <div class="form-group">
+                <label for="complaints">Number of Complaints (عدد الشكاوى اليوم):</label>
+                <input type="number" name="complaints" required>
+            </div>
+
+            <!-- Dropdown for Complaint Type -->
+            <div class="form-group">
+                <label for="complaint_type">Complaint Type:</label>
+                <select name="complaint_type" required>
+                    <option value="Medical">Medical</option>
+                    <option value="Administrative">Administrative</option>
+                </select>
+            </div>
+
+            <!-- Optional Remarks field -->
+            <div class="form-group">
+                <label for="complaint_remarks">Remarks (Optional):</label>
+                <textarea name="complaint_remarks" rows="4" placeholder="Enter remarks here (optional)"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="referral_patients">Number of Referral Patients:</label>
+                <input type="number" name="referral_patients" required>
+            </div>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        // Show splash screen for 3-4 seconds when page loads
+        window.onload = function() {
+            setTimeout(function() {
+                // Start loading bar animation
+                document.getElementById('loading-bar').style.width = '100%';
+
+                // Fade out the splash screen after 3 seconds
+                setTimeout(function() {
+                    document.getElementById('splash-screen').style.opacity = '0'; // Fade out splash screen
+                    setTimeout(function() {
+                        document.getElementById('splash-screen').style.display = 'none'; // Hide splash screen completely
+                    }, 1000); // Wait for fade-out to complete
+                }, 3000); // Splash screen visible for 3 seconds
+            }, 100); // Delay to start loading bar
+        };
+    </script>
+</body>
+</html>
